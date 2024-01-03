@@ -24,7 +24,7 @@ flags = flags.FLAGS
 
 #
 from tqdm import tqdm
-
+import pandas as pd
 #
 import lib_snn
 from lib_snn.sim import glb
@@ -2007,8 +2007,8 @@ class Model(tf.keras.Model):
                 self.optimizer.apply_gradients(grads_accum_and_vars)
 
                 # print gradients
-                #if True:
-                if False:
+                if True:
+                # if False:
                     print('')
                     print('gradients')
 
@@ -2020,10 +2020,23 @@ class Model(tf.keras.Model):
                         g_max = tf.reduce_max(g)
                         g_min = tf.reduce_min(g)
                         g_std = tf.math.reduce_std(g)
-                        if name == 'conv1/kernel:0':
-                            print("{:} - mean: {:e}, max: {:e}, min: {:e}, std: {:e}".format(name, g_mean, g_max, g_min, g_std))
-
+                        # if name == 'conv1/kernel:0':
+                        print("{:} - mean: {:e}, max: {:e}, min: {:e}, std: {:e}".format(name, g_mean, g_max, g_min, g_std))
+                        if 'kernel' in name:
+                            nmean = g_mean.numpy()
+                            nmax = g_max.numpy()
+                            nmin = g_min.numpy()
+                            nstd = g_std.numpy()
+                            dict = {}
+                            dict['name'] = name
+                            dict['mean'] = nmean
+                            dict['max'] = nmax
+                            dict['min'] = nmin
+                            dict['std'] = nstd
+                            df = pd.DataFrame(dict, index=[0])
+                            df.to_csv('grad_test.csv', mode='a', index=False)
                     print('')
+
 
                 #
                 #print('gradients')

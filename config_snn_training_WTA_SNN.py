@@ -9,7 +9,7 @@ import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 #os.environ["CUDA_VISIBLE_DEVICES"]="0,2"
 #os.environ["CUDA_VISIBLE_DEVICES"]="4,7"
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
+os.environ["CUDA_VISIBLE_DEVICES"]="4"
 #os.environ["CUDA_VISIBLE_DEVICES"]="0,1,2,3"
 #os.environ["CUDA_VISIBLE_DEVICES"]="0,1,2,3,4,5,6,7"
 #os.environ["CUDA_VISIBLE_DEVICES"]="0,1,2,3"
@@ -94,8 +94,8 @@ conf.leak_const_init = 0.9
 
 
 # WTA-SNN
-if True:
-#if False:
+# if True:
+if False:
     conf.reg_spike_out = True
     conf.reg_spike_out_const = 3E-6
     conf.reg_spike_out_alpha = 4
