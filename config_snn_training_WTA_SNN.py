@@ -52,8 +52,8 @@ conf.debug_mode = True
 #conf.train_epoch = 90
 #conf.step_decay_epoch = 30
 #conf.train_epoch = 10
-#conf.train_epoch = 10
-conf.num_train_data = 1000
+# conf.train_epoch = 10
+# conf.num_train_data = 1000
 #conf.idx_test_data=0
 #conf.num_test_data=1
 
