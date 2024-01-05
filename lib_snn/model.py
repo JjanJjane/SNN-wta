@@ -2017,8 +2017,8 @@ class Model(tf.keras.Model):
                 # print gradients
                 if True:
                 # if False:
-                    print('')
-                    print('gradients')
+                #     print('')
+                    # print('gradients')
                     for gv in grads_accum_and_vars:
                         g = gv[0]
                         v = gv[1]
@@ -2028,11 +2028,11 @@ class Model(tf.keras.Model):
                         g_min = tf.reduce_min(g)
                         g_std = tf.math.reduce_std(g)
                         # if name == 'conv1/kernel:0':
-                        header = ['name', 'mean', 'max', 'min', 'std']
+                        header = ['name', 'mean', 'max', 'min', 'std','normal']
                         epoch1 = ['epoch:1']
                         if 'kernel' in name:
-                            print("{:} - mean: {:e}, max: {:e}, min: {:e}, std: {:e}".format(name, g_mean, g_max, g_min, g_std))
-                            with open('grad_test.csv','a', newline='') as csv_file:
+                            # print("{:} - mean: {:e}, max: {:e}, min: {:e}, std: {:e}".format(name, g_mean, g_max, g_min, g_std))
+                            with open('grad_normal.csv','a', newline='') as csv_file:
                                 csv_writer = csv.writer(csv_file)
 
                                 if csv_file.tell() == 0:
@@ -2048,11 +2048,11 @@ class Model(tf.keras.Model):
                             dict['max'] = nmax
                             dict['min'] = nmin
                             dict['std'] = nstd
-                            with open('grad_test.csv','a', newline='') as csv_file:
+                            with open('grad_normal.csv','a', newline='') as csv_file:
                                 csv_writer = csv.writer(csv_file)
                                 csv_writer.writerow([dict['name'], dict['mean'], dict['max'], dict['min'], dict['std']])
 
-                            with open('grad_test.csv', 'a', newline='') as csv_file:
+                            with open('grad_normal.csv', 'a', newline='') as csv_file:
                                 csv_writer = csv.writer(csv_file)
 
                                 if 'predictions' in name and cnt_yc != 501:
@@ -2064,9 +2064,7 @@ class Model(tf.keras.Model):
                                     epoch_yc += 1
                                     b = [f'epoch:{epoch_yc}']
                                     csv_writer.writerow(b)
-                # df = pd.DataFrame(dict, index=[0])
-                            # df.to_csv('grad_test.csv', mode='a', index=False)
-                    print('')
+                    # print('')
 
 
                 #
