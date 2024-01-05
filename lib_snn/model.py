@@ -2044,10 +2044,10 @@ class Model(tf.keras.Model):
                             nstd = g_std.numpy()
                             dict = {}
                             dict['name'] = name
-                            dict['mean'] = nmean
-                            dict['max'] = nmax
-                            dict['min'] = nmin
-                            dict['std'] = nstd
+                            dict['mean'] = abs(nmean)
+                            dict['max'] = abs(nmax)
+                            dict['min'] = abs(nmin)
+                            dict['std'] = abs(nstd)
                             with open('grad_normal.csv','a', newline='') as csv_file:
                                 csv_writer = csv.writer(csv_file)
                                 csv_writer.writerow([dict['name'], dict['mean'], dict['max'], dict['min'], dict['std']])
