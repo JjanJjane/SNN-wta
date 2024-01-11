@@ -49,7 +49,7 @@ conf.debug_mode = True
 #conf.lmb = 1.0E-2
 
 #
-#conf.train_epoch = 90
+conf.train_epoch = 150
 #conf.step_decay_epoch = 30
 #conf.train_epoch = 10
 # conf.train_epoch = 10
@@ -122,7 +122,7 @@ if False:
 
 
 # spike reg - similar acc
-#if True:
+# if True:
 if False:
     conf.reg_spike_out = True
     conf.reg_spike_out_const = 3E-6

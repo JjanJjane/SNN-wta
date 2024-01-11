@@ -827,7 +827,7 @@ def postproc_batch_train_snn(self):
     global cnt_yc
     global epoch_yc
     #
-    header = ['name', 'spike_counts','normal']
+    header = ['name', 'spike_counts']
     epoch1 = ['epoch:1']
     with open('spike_normal.csv', 'a', newline='') as csv_file:
         csv_writer = csv.writer(csv_file)
@@ -842,22 +842,23 @@ def postproc_batch_train_snn(self):
         dict = {}
         dict['name'] = name
         dict['spike_count'] = spike_count_np
-        with open('spike_normal.csv', 'a', newline='') as csv_file:
-            csv_writer = csv.writer(csv_file)
-            csv_writer.writerow([dict['name'], dict['spike_count']])
-
-        with open('spike_normal.csv', 'a', newline='') as csv_file:
+        with open('spike_noraml.csv', 'a', newline='') as csv_file:
             csv_writer = csv.writer(csv_file)
 
-            if 'predictions' in name and cnt_yc != 501:
+            if 'n_in' in name and cnt_yc != 501:
                 a = [f'iterate:{cnt_yc}']
                 csv_writer.writerow(a)
                 cnt_yc += 1
-            elif cnt_yc == 501:
-                cnt_yc = 1
+
+        with open('spike_normal.csv', 'a', newline='') as csv_file:
+            csv_writer = csv.writer(csv_file)
+            csv_writer.writerow([dict['name'], dict['spike_count']])
+            if 'predictions' in name and cnt_yc == 501:
                 epoch_yc += 1
                 b = [f'epoch:{epoch_yc}']
                 csv_writer.writerow(b)
+                cnt_yc = 1
+
         # print(spike_count)
 
     #self.spike_count_total
