@@ -428,6 +428,8 @@ class Model(tf.keras.Model):
                 assert False
 
 
+        # debug
+        self.h_lab_tot_glb=[0]*10
     #def init_graph(self, inputs, outputs,**kwargs):
         #super(Model, self).__init__(inputs=inputs,outputs=outputs,**kwargs)
 
@@ -1807,6 +1809,7 @@ class Model(tf.keras.Model):
         f_grad_accum=False
         #f_grad_accum=True
 
+
         if f_grad_accum:
             for t in range_ts:
                 #with tf.GradientTape(persistent=True) as tape:
@@ -1997,6 +2000,18 @@ class Model(tf.keras.Model):
                         y_pred = self(x, training=True)
                         loss = self.compute_loss(x, y, y_pred, sample_weight)
 
+                        #
+                        #lab=tf.argmax(y,axis=-1)
+                        #h_lab = np.histogram(lab)
+                        #print("")
+                        #print(h_lab[0])
+                        #self.h_lab_tot_glb = self.h_lab_tot_glb + h_lab[0]
+                        ##print(self.h_lab_tot_glb)
+                        #sum = tf.reduce_sum(self.h_lab_tot_glb)
+                        #print((self.h_lab_tot_glb/sum).numpy())
+                        #print("")
+
+
                     self._validate_target_and_loss(y, loss)
                     # Run backwards pass.
                     # from keras.optimizers.optimizer_v2.optimizer_v2.py
@@ -2008,7 +2023,12 @@ class Model(tf.keras.Model):
                     #glb_t.t=conf.time_step
                     glb_t.set(conf.time_step)
 
-                    grads_accum_and_vars = self.optimizer._compute_gradients(loss=loss, var_list=self.trainable_variables, grad_loss=grad_loss, tape=tape)
+                    if hasattr(self.optimizer,'_compute_gradients'):
+                        grads_accum_and_vars = self.optimizer._compute_gradients(loss=loss, var_list=self.trainable_variables, grad_loss=grad_loss, tape=tape)
+                    elif hasattr(self.optimizer,'compute_gradients'):
+                        grads_accum_and_vars = self.optimizer.compute_gradients(loss=loss, var_list=self.trainable_variables, tape=tape)
+                    else:
+                        assert False, 'compute gradients'
 
 
                 #
@@ -2128,9 +2148,9 @@ class Model(tf.keras.Model):
                                     cnt_yc = 1
                 # if True:
                 if False:
-                #
-                #     print('')
-                    # print('gradients')
+                    print('')
+                    print('gradients')
+
                     for gv in grads_accum_and_vars:
                         g = gv[0]
                         v = gv[1]
@@ -2139,51 +2159,17 @@ class Model(tf.keras.Model):
                         g_max = tf.reduce_max(g)
                         g_min = tf.reduce_min(g)
                         g_std = tf.math.reduce_std(g)
-                        # if name == 'conv1/kernel:0':
-                        header = ['name', 'mean', 'max', 'min', 'std']
-                        epoch1 = ['epoch:1']
-                        if 'kernel' in name:
-                            # print("{:} - mean: {:e}, max: {:e}, min: {:e}, std: {:e}".format(name, g_mean, g_max, g_min, g_std))
-                            with open('grad_sim_acc.csv','a', newline='') as csv_file:
-                                csv_writer = csv.writer(csv_file)
+                        if name == 'conv1/kernel:0':
+                            print("{:} - mean: {:e}, max: {:e}, min: {:e}, std: {:e}".format(name, g_mean, g_max, g_min, g_std))
 
-                                if csv_file.tell() == 0:
-                                    csv_writer.writerow(header)
-                                    csv_writer.writerow(epoch1)
-                            nmean = g_mean.numpy()
-                            nmax = g_max.numpy()
-                            nmin = g_min.numpy()
-                            nstd = g_std.numpy()
-                            dict = {}
-                            dict['name'] = name
-                            dict['mean'] = abs(nmean)
-                            dict['max'] = abs(nmax)
-                            dict['min'] = abs(nmin)
-                            dict['std'] = abs(nstd)
-                            with open('grad_sim_acc.csv', 'a', newline='') as csv_file:
-                                csv_writer = csv.writer(csv_file)
-
-                                if 'conv1/kernel:0' in name and cnt_yc != 501:
-                                    a = [f'iterate:{cnt_yc}']
-                                    csv_writer.writerow(a)
-                                    cnt_yc += 1
-                            with open('grad_sim_acc.csv','a', newline='') as csv_file:
-                                csv_writer = csv.writer(csv_file)
-                                csv_writer.writerow([dict['name'], dict['mean'], dict['max'], dict['min'], dict['std']])
-                                if 'predictions' in name and cnt_yc == 501:
-                                    epoch_yc += 1
-                                    b = [f'epoch:{epoch_yc}']
-                                    csv_writer.writerow(b)
-                                    cnt_yc = 1
-
-                    # print('')
-
+                    print('')
 
                 #
                 #print('gradients')
                 #print(grads_accum_and_vars)
 
 
+                #nan_test = [tf.reduce_any(tf.math.is_nan(grad_accum)) for grad_accum in grads_accum]
                 nan_test = [tf.reduce_any(tf.math.is_nan(grad_accum)) for grad_accum in grads_accum]
                 #if tf.reduce_any(nan_test):
                 #if tf.executing_eagerly() and tf.reduce_any(nan_test):
@@ -2196,10 +2182,11 @@ class Model(tf.keras.Model):
                         self.print_snn_train(grads_accum_and_vars)
 
                     #if tf.reduce_any(nan_test) or (loss > 100):
-                    if tf.reduce_any(nan_test) or (loss > 1000):
-                        print(loss)
+                    #if tf.reduce_any(nan_test) or (loss > 1000):
+                    #if tf.reduce_any(nan_test):
+                    if tf.math.is_nan(loss):
+                        print('loss - {:}'.format(loss))
                         print(tf.reduce_any(nan_test))
-                        #print('here')
                         assert False
 
 
