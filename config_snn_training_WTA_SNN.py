@@ -118,9 +118,9 @@ conf.leak_const_init = 0.9
 conf.reg_spike_vis_fmap_sc=True
 
 # trained model
-mode='NORMAL'
+# mode='NORMAL'
 #mode='WTA-SNN_1'
-#mode='WTA-SNN_2'
+mode='WTA-SNN_2'
 #mode='SIM-A'
 #mode='SIM-S'
 
