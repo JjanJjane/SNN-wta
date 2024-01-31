@@ -9,7 +9,7 @@ import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 #os.environ["CUDA_VISIBLE_DEVICES"]="0,2"
 #os.environ["CUDA_VISIBLE_DEVICES"]="4,7"
-os.environ["CUDA_VISIBLE_DEVICES"]="4"
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
 #os.environ["CUDA_VISIBLE_DEVICES"]="0,1,2,3"
 #os.environ["CUDA_VISIBLE_DEVICES"]="0,1,2,3,4,5,6,7"
 #os.environ["CUDA_VISIBLE_DEVICES"]="0,1,2,3"
@@ -23,7 +23,7 @@ from config import config
 conf = config.flags
 
 #
-conf.debug_mode = True
+#conf.debug_mode = True
 #conf.verbose_snn_train = True
 #conf.verbose_visual = True
 
@@ -36,9 +36,12 @@ conf.debug_mode = True
 #conf.batch_size=300
 #conf.batch_size=180
 #conf.batch_size=120
+#conf.batch_size=51
 #conf.batch_size=1
 
-#conf.time_step=2
+#conf.batch_size_inf = 51
+
+#conf.time_step=4
 #conf.name_model_load='./models/VGG16_AP_CIFAR100/ep-300_bat-100_opt-SGD_lr-STEP-1E-01_lmb-1E-04_sc_cm_ts-4_nc-R-R_nr-z'
 
 
@@ -112,6 +115,7 @@ conf.leak_const_init = 0.9
 ##conf.reg_spike_out_sc_sq=True
 #conf.reg_spike_out_norm = True
 
+conf.reg_spike_vis_fmap_sc=True
 
 # trained model
 mode='NORMAL'
