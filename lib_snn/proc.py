@@ -7,6 +7,7 @@ import tensorflow as tf
 #from config import conf
 #from config_common import conf
 from absl import flags
+import config_snn_training_WTA_SNN as conW
 conf = flags.FLAGS
 
 
@@ -943,38 +944,68 @@ def postproc_batch_train_snn(self):
     spike_count_batch_end(self)
     global cnt_yc
     global epoch_yc
-    #
-    header = ['name', 'spike_counts']
+    # mode = 'NORMAL'
+    mode= conW.mode
+    # mode='WTA-SNN_2'
+    # mode='SIM-A'
+    # mode='SIM-S'
+
+    header = ['name', 'spike_counts', ]
+    header_histo = ['name', '0', '1', '2', '3', '4']
     epoch1 = ['epoch:1']
-    with open('spike_WTA_2.csv', 'a', newline='') as csv_file:
+    with open('spike_' + mode + '.csv', 'a', newline='') as csv_file:
         csv_writer = csv.writer(csv_file)
 
         if csv_file.tell() == 0:
             csv_writer.writerow(header)
             csv_writer.writerow(epoch1)
+    with open('spike_' + mode + '_hist.csv', 'a', newline='') as csv_file:
+        csv_writer = csv.writer(csv_file)
+
+        if csv_file.tell() == 0:
+            csv_writer.writerow(header_histo)
+            csv_writer.writerow(epoch1)
     for neuron in self.model.layers_w_neuron:
         name = neuron.name
+        hist, bins = np.histogram(neuron.act.spike_count_int.numpy(), bins=conf.time_step + 1)
         spike_count = self.list_spike_count[name]
         spike_count_np = spike_count.numpy()
         dict = {}
         dict['name'] = name
         dict['spike_count'] = spike_count_np
-        with open('spike_WTA_2.csv', 'a', newline='') as csv_file:
+        dict_hist = {}
+        dict_hist['name'] = name
+        dict_hist['0'] = hist[0]
+        dict_hist['1'] = hist[1]
+        dict_hist['2'] = hist[2]
+        dict_hist['3'] = hist[3]
+        dict_hist['4'] = hist[4]
+
+        with open('spike_' + mode + '.csv', 'a', newline='') as csv_file:
             csv_writer = csv.writer(csv_file)
 
             if 'n_in' in name and cnt_yc != 501:
                 a = [f'iterate:{cnt_yc}']
                 csv_writer.writerow(a)
                 cnt_yc += 1
-
-        with open('spike_WTA_2.csv', 'a', newline='') as csv_file:
+        with open('spike_' + mode + '_hist.csv', 'a', newline='') as csv_file:
+            csv_writer = csv.writer(csv_file)
+            if cnt_yc == 501:
+                csv_writer.writerow(
+                    [dict_hist['name'], dict_hist['0'], dict_hist['1'], dict_hist['2'], dict_hist['3'], dict_hist['4']])
+                if 'predictions' in name:
+                    epoch_yc += 1
+                    b = [f'epoch:{epoch_yc}']
+                    csv_writer.writerow(b)
+        with open('spike_' + mode + '.csv', 'a', newline='') as csv_file:
             csv_writer = csv.writer(csv_file)
             csv_writer.writerow([dict['name'], dict['spike_count']])
             if 'predictions' in name and cnt_yc == 501:
-                epoch_yc += 1
+                # epoch_yc += 1
                 b = [f'epoch:{epoch_yc}']
                 csv_writer.writerow(b)
                 cnt_yc = 1
+
 
         # print(spike_count)
 
@@ -1029,13 +1060,24 @@ def spike_count_batch_end(self):
     if isinstance(strategy,tf.distribute.OneDeviceStrategy):
         for neuron in self.model.layers_w_neuron:
             name = neuron.name
+            # hist, bins= np.histogram(neuron.act.spike_count_int.numpy(),bins=conf.time_step+1)
+            # print(name)
+            # print(bins)
+            # print(hist)
             spike_count = tf.reduce_sum(neuron.act.spike_count_int)
+            # print(spike_count)
             self.list_spike_count[name] += spike_count
             self.spike_count_total += spike_count
     else:
         for neuron in self.model.layers_w_neuron:
             name = neuron.name
+            # hist, bins= np.histogram(neuron.act.spike_count_int.numpy(),bins=conf.time_step+1)
+            # # print(name)
+            # # print(conf.time_step+1)
+            # # print(bins)
+            # print(hist)
             spike_count = tf.reduce_sum(neuron.act.spike_count_int.values)
+            # print(spike_count)
             self.list_spike_count[name] += spike_count
             self.spike_count_total += spike_count
 

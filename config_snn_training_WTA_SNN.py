@@ -23,7 +23,7 @@ from config import config
 conf = config.flags
 
 #
-#conf.debug_mode = True
+conf.debug_mode = True
 #conf.verbose_snn_train = True
 #conf.verbose_visual = True
 
@@ -64,7 +64,7 @@ conf = config.flags
 
 
 #
-#conf.num_train_data = 1000
+conf.num_train_data = 1000
 #conf.idx_test_data=0
 #conf.num_test_data=1
 
@@ -119,8 +119,8 @@ conf.reg_spike_vis_fmap_sc=True
 
 # trained model
 # mode='NORMAL'
-#mode='WTA-SNN_1'
-mode='WTA-SNN_2'
+mode='WTA-SNN_1'
+# mode='WTA-SNN_2'
 #mode='SIM-A'
 #mode='SIM-S'
 

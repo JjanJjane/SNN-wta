@@ -21,7 +21,7 @@ import keras
 #
 from absl import flags
 flags = flags.FLAGS
-
+import config_snn_training_WTA_SNN as conW
 import csv
 #
 from tqdm import tqdm
@@ -2036,6 +2036,7 @@ class Model(tf.keras.Model):
 
                 # print gradients
                 if True:
+                    mode = conW.mode
                     #if False:
                     # print('')
                     # print('gradients')
@@ -2049,19 +2050,19 @@ class Model(tf.keras.Model):
                         g_min = tf.reduce_min(g)
                         g_std = tf.math.reduce_std(g)
                         # if name == 'conv1/kernel:0':
-                        header = ['name', 'mean', 'max', 'min', 'std','WTA-SNN']
-                        header_err = ['num', 'mean', 'max', 'min', 'std','WTA-SNN']
+                        header = ['name', 'mean', 'max', 'min', 'std']
+                        header_err = ['num', 'mean', 'max', 'min', 'std']
                         epoch1 = ['epoch:1']
 
                         if 'kernel' in name:
                             if 'predictions' in name:
-                                with open('error_WTA_2_all.csv', 'a', newline='') as csv_file:
+                                with open('error_'+mode+'_all.csv', 'a', newline='') as csv_file:
                                     csv_writer = csv.writer(csv_file)
 
                                     if csv_file.tell() == 0:
                                         csv_writer.writerow(header_err)
                                         csv_writer.writerow(epoch1)
-                                with open('error_WTA_2_cer.csv', 'a', newline='') as csv_file:
+                                with open('error_'+mode+'_cer.csv', 'a', newline='') as csv_file:
                                     csv_writer = csv.writer(csv_file)
 
                                     if csv_file.tell() == 0:
@@ -2082,26 +2083,26 @@ class Model(tf.keras.Model):
                                 dict_err['min'] = abs(nmin)
                                 dict_err['std'] = abs(nstd)
                                 dict_err['epoch'] = epoch_yc
-                                with open('error_WTA_2_all.csv', 'a', newline='') as csv_file:
+                                with open('error_'+mode+'_all.csv', 'a', newline='') as csv_file:
                                     csv_writer = csv.writer(csv_file)
                                     csv_writer.writerow([dict_err['iter'], dict_err['mean'], dict_err['max'], dict_err['min'], dict_err['std']])
 
                                     if cnt_yc == 501:
                                         b = [f'epoch:{epoch_yc + 1}']
                                         csv_writer.writerow(b)
-                                with open('error_WTA_2_cer.csv', 'a', newline='') as csv_file:
+                                with open('error_'+mode+'_cer.csv', 'a', newline='') as csv_file:
                                     csv_writer = csv.writer(csv_file)
 
                                     if cnt_yc == 501:
                                         csv_writer.writerow([dict_err['epoch'], dict_err['mean'], dict_err['max'], dict_err['min'],dict_err['std']])
                             # print("{:} - mean: {:e}, max: {:e}, min: {:e}, std: {:e}".format(name, g_mean, g_max, g_min, g_std))
-                            with open('grad_WTA_2_all.csv','a', newline='') as csv_file:
+                            with open('grad_'+mode+'_all.csv','a', newline='') as csv_file:
                                 csv_writer = csv.writer(csv_file)
 
                                 if csv_file.tell() == 0:
                                     csv_writer.writerow(header)
                                     csv_writer.writerow(epoch1)
-                            with open('grad_WTA_2_cer.csv', 'a', newline='') as csv_file:
+                            with open('grad_'+mode+'_cer.csv', 'a', newline='') as csv_file:
                                 csv_writer = csv.writer(csv_file)
 
                                 if csv_file.tell() == 0:
@@ -2123,14 +2124,14 @@ class Model(tf.keras.Model):
                             #     if 'conv1/kernel:0' in name and cnt_yc != 501:
                             #         a = [f'iterate:{cnt_yc}']
                             #         csv_writer.writerow(a)
-                            with open('grad_WTA_2_all.csv', 'a', newline='') as csv_file:
+                            with open('grad_'+mode+'_all.csv', 'a', newline='') as csv_file:
                                 csv_writer = csv.writer(csv_file)
 
                                 if 'conv1/kernel:0' in name and cnt_yc != 501:
                                     a = [f'iterate:{cnt_yc}']
                                     csv_writer.writerow(a)
                                     cnt_yc += 1
-                            with open('grad_WTA_2_cer.csv','a', newline='') as csv_file:
+                            with open('grad_'+mode+'_cer.csv','a', newline='') as csv_file:
                                 csv_writer = csv.writer(csv_file)
                                 if cnt_yc == 501:
                                     csv_writer.writerow([dict['name'], dict['mean'], dict['max'], dict['min'], dict['std']])
@@ -2138,7 +2139,7 @@ class Model(tf.keras.Model):
                                         epoch_yc += 1
                                         b = [f'epoch:{epoch_yc}']
                                         csv_writer.writerow(b)
-                            with open('grad_WTA_2_all.csv','a', newline='') as csv_file:
+                            with open('grad_'+mode+'_all.csv','a', newline='') as csv_file:
                                 csv_writer = csv.writer(csv_file)
                                 csv_writer.writerow([dict['name'], dict['mean'], dict['max'], dict['min'], dict['std']])
                                 if 'predictions' in name and cnt_yc == 501:
